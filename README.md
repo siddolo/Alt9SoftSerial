@@ -1,7 +1,7 @@
 Alt9SoftSerial Library
 ======================
 
-Emulates a additional 9 bit serial port on an Arduino, allowing you to
+Emulates a additional 9 bit serial port on an Arduino allowing you to
 communicate with another 9 bit serial device.
 
 To learn more about 9 bit serial visit [What Is 9-Bit Data
