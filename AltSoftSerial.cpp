@@ -40,22 +40,22 @@ static uint16_t ticks_per_bit=0;
 bool AltSoftSerial::timing_error=false;
 
 static uint8_t rx_state;
-static uint8_t rx_byte;
-static uint8_t rx_bit = 0;
+static uint16_t rx_byte;
+static uint16_t rx_bit = 0;
 static uint16_t rx_target;
 static uint16_t rx_stop_ticks=0;
 static volatile uint8_t rx_buffer_head;
 static volatile uint8_t rx_buffer_tail;
 #define RX_BUFFER_SIZE 80
-static volatile uint8_t rx_buffer[RX_BUFFER_SIZE];
+static volatile uint16_t rx_buffer[RX_BUFFER_SIZE];
 
 static volatile uint8_t tx_state=0;
-static uint8_t tx_byte;
+static uint16_t tx_byte;
 static uint8_t tx_bit;
 static volatile uint8_t tx_buffer_head;
 static volatile uint8_t tx_buffer_tail;
 #define TX_BUFFER_SIZE 68
-static volatile uint8_t tx_buffer[TX_BUFFER_SIZE];
+static volatile uint16_t tx_buffer[TX_BUFFER_SIZE];
 
 
 #ifndef INPUT_PULLUP
@@ -103,7 +103,7 @@ void AltSoftSerial::end(void)
 /**           Transmission             **/
 /****************************************/
 
-void AltSoftSerial::writeByte(uint8_t b)
+void AltSoftSerial::writeByte(uint16_t b)
 {
 	uint8_t intr_state, head;
 
@@ -129,13 +129,13 @@ void AltSoftSerial::writeByte(uint8_t b)
 
 ISR(COMPARE_A_INTERRUPT)
 {
-	uint8_t state, byte, bit, head, tail;
-	uint16_t target;
+	uint8_t state, bit, head, tail;
+	uint16_t byte, target;
 
 	state = tx_state;
 	byte = tx_byte;
 	target = GET_COMPARE_A();
-	while (state < 9) {
+	while (state < 10) {
 		target += ticks_per_bit;
 		bit = byte & 1;
 		byte >>= 1;
@@ -154,8 +154,8 @@ ISR(COMPARE_A_INTERRUPT)
 			return;
 		}
 	}
-	if (state == 9) {
-		tx_state = 10;
+	if (state == 10) {
+		tx_state = 11;
 		CONFIG_MATCH_SET();
 		SET_COMPARE_A(target + ticks_per_bit);
 		return;
@@ -191,8 +191,8 @@ void AltSoftSerial::flushOutput(void)
 
 ISR(CAPTURE_INTERRUPT)
 {
-	uint8_t state, bit, head;
-	uint16_t capture, target;
+	uint8_t state, head;
+	uint16_t bit, capture, target;
 	int16_t offset;
 
 	capture = GET_INPUT_CAPTURE();
@@ -202,7 +202,7 @@ ISR(CAPTURE_INTERRUPT)
 		rx_bit = 0;
 	} else {
 		CONFIG_CAPTURE_RISING_EDGE();
-		rx_bit = 0x80;
+		rx_bit = 0x100;
 	}
 	state = rx_state;
 	if (state == 0) {
@@ -220,7 +220,7 @@ ISR(CAPTURE_INTERRUPT)
 			rx_byte = (rx_byte >> 1) | rx_bit;
 			target += ticks_per_bit;
 			state++;
-			if (state >= 9) {
+			if (state >= 10) {
 				DISABLE_INT_COMPARE_B();
 				head = rx_buffer_head + 1;
 				if (head >= RX_BUFFER_SIZE) head = 0;
@@ -242,13 +242,14 @@ ISR(CAPTURE_INTERRUPT)
 
 ISR(COMPARE_B_INTERRUPT)
 {
-	uint8_t head, state, bit;
+	uint8_t head, state;
+	uint16_t bit;
 
 	DISABLE_INT_COMPARE_B();
 	CONFIG_CAPTURE_FALLING_EDGE();
 	state = rx_state;
-	bit = rx_bit ^ 0x80;
-	while (state < 9) {
+	bit = rx_bit ^ 0x100;
+	while (state < 10) {
 		rx_byte = (rx_byte >> 1) | bit;
 		state++;
 	}
@@ -267,7 +268,8 @@ ISR(COMPARE_B_INTERRUPT)
 
 int AltSoftSerial::read(void)
 {
-	uint8_t head, tail, out;
+	uint8_t head, tail;
+	uint16_t out;
 
 	head = rx_buffer_head;
 	tail = rx_buffer_tail;

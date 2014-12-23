@@ -51,9 +51,11 @@ public:
 	int available();
 #if ARDUINO >= 100
 	size_t write(uint8_t byte) { writeByte(byte); return 1; }
+	size_t write(uint16_t byte) { writeByte(byte); return 1; }
 	void flush() { flushOutput(); }
 #else
 	void write(uint8_t byte) { writeByte(byte); }
+	void write(uint16_t byte) { writeByte(byte); }
 	void flush() { flushInput(); }
 #endif
 	using Print::write;
@@ -69,7 +71,7 @@ public:
 	static bool timing_error;
 private:
 	static void init(uint32_t cycles_per_bit);
-	static void writeByte(uint8_t byte);
+	static void writeByte(uint16_t byte);
 };
 
 #endif
