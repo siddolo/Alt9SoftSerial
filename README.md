@@ -1,19 +1,19 @@
 Alt9SoftSerial Library
 ======================
 
-Emulates a additional 9 bit serial port on an Arduino allowing you to
-communicate with another 9 bit serial device.
+Emulates an additional 9 bit serial port on an Arduino board allowing
+you to communicate with 9 bit serial devices.
 
 To learn more about 9 bit serial visit [What Is 9-Bit Data
 Framing?](http://www.sealevel.com/support/article/AA-00146/0/What-Is-9-Bit-Data-Framing.html)
 
-Tested on a copule of [Arduino Pro
-Mini](http://arduino.cc/en/Main/ArduinoBoardProMini) boards at 8 Mhz and
-16 Mhz (use pin 8 for TX and pin 9 for RX) using the [Arduino
-IDE](http://arduino.cc/en/main/software#toc1) 1.5.x.
+Tested with the [Arduino IDE](http://arduino.cc/en/main/software#toc1)
+1.5.x on a copule of [Arduino Pro
+Mini](http://arduino.cc/en/Main/ArduinoBoardProMini) boards at 8 and 16
+Mhz 6 Mhzpin 8 for TX and pin 9 for RX).
 
-Should work on any board using an ATmega328 and, in theory, on any board
-supported by
+Should work on any Arduino-compatible board with an ATmega328 and, in
+theory, on any board supported by
 [AltSoftSerial](http://www.pjrc.com/teensy/td_libs_AltSoftSerial.html).
 
 Author
