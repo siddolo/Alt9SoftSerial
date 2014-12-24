@@ -10,7 +10,7 @@ Framing?](http://www.sealevel.com/support/article/AA-00146/0/What-Is-9-Bit-Data-
 Tested with the [Arduino IDE](http://arduino.cc/en/main/software#toc1)
 1.5.x on a copule of [Arduino Pro
 Mini](http://arduino.cc/en/Main/ArduinoBoardProMini) boards at 8 and 16
-Mhz 6 Mhzpin 8 for TX and pin 9 for RX).
+Mhz (use pin 8 for TX and pin 9 for RX).
 
 Should work on any Arduino-compatible board with an ATmega328 and, in
 theory, on any board supported by
