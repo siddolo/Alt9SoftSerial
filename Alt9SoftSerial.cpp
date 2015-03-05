@@ -1,17 +1,17 @@
 /* An Alternative Software Serial Library
  * http://www.pjrc.com/teensy/td_libs_AltSoftSerial.html
  * Copyright (c) 2014 PJRC.COM, LLC, Paul Stoffregen, paul@pjrc.com
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@
 // Version 1.0: Initial Release
 
 
-#include "AltSoftSerial.h"
+#include "Alt9SoftSerial.h"
 #include "config/AltSoftSerial_Boards.h"
 #include "config/AltSoftSerial_Timers.h"
 
@@ -37,7 +37,7 @@
 /****************************************/
 
 static uint16_t ticks_per_bit=0;
-bool AltSoftSerial::timing_error=false;
+bool Alt9SoftSerial::timing_error=false;
 
 static uint8_t rx_state;
 static uint16_t rx_byte;
@@ -62,7 +62,7 @@ static volatile uint16_t tx_buffer[TX_BUFFER_SIZE];
 #define INPUT_PULLUP INPUT
 #endif
 
-void AltSoftSerial::init(uint32_t cycles_per_bit)
+void Alt9SoftSerial::init(uint32_t cycles_per_bit)
 {
 	if (cycles_per_bit < 7085) {
 		CONFIG_TIMER_NOPRESCALE();
@@ -88,7 +88,7 @@ void AltSoftSerial::init(uint32_t cycles_per_bit)
 	ENABLE_INT_INPUT_CAPTURE();
 }
 
-void AltSoftSerial::end(void)
+void Alt9SoftSerial::end(void)
 {
 	DISABLE_INT_COMPARE_B();
 	DISABLE_INT_INPUT_CAPTURE();
@@ -103,7 +103,7 @@ void AltSoftSerial::end(void)
 /**           Transmission             **/
 /****************************************/
 
-void AltSoftSerial::writeByte(uint16_t b)
+void Alt9SoftSerial::writeByte(uint16_t b)
 {
 	uint8_t intr_state, head;
 
@@ -178,7 +178,7 @@ ISR(COMPARE_A_INTERRUPT)
 	}
 }
 
-void AltSoftSerial::flushOutput(void)
+void Alt9SoftSerial::flushOutput(void)
 {
 	while (tx_state) /* wait */ ;
 }
@@ -266,7 +266,7 @@ ISR(COMPARE_B_INTERRUPT)
 
 
 
-int AltSoftSerial::read(void)
+int Alt9SoftSerial::read(void)
 {
 	uint8_t head, tail;
 	uint16_t out;
@@ -280,7 +280,7 @@ int AltSoftSerial::read(void)
 	return out;
 }
 
-int AltSoftSerial::peek(void)
+int Alt9SoftSerial::peek(void)
 {
 	uint8_t head, tail;
 
@@ -290,7 +290,7 @@ int AltSoftSerial::peek(void)
 	return rx_buffer[tail];
 }
 
-int AltSoftSerial::available(void)
+int Alt9SoftSerial::available(void)
 {
 	uint8_t head, tail;
 
@@ -300,7 +300,7 @@ int AltSoftSerial::available(void)
 	return RX_BUFFER_SIZE + head - tail;
 }
 
-void AltSoftSerial::flushInput(void)
+void Alt9SoftSerial::flushInput(void)
 {
 	rx_buffer_head = rx_buffer_tail;
 }
@@ -316,4 +316,3 @@ void ftm0_isr(void)
 	if (flags & (1<<0)) altss_compare_b_interrupt();
 }
 #endif
-
