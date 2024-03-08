@@ -193,7 +193,7 @@ ISR(CAPTURE_INTERRUPT)
 {
 	uint8_t state, head;
 	uint16_t bit, capture, target;
-	int16_t offset;
+	uint16_t offset, offset_overflow;
 
 	capture = GET_INPUT_CAPTURE();
 	bit = rx_bit;
@@ -214,9 +214,10 @@ ISR(CAPTURE_INTERRUPT)
 		}
 	} else {
 		target = rx_target;
+		offset_overflow = 65535 - ticks_per_bit;
 		while (1) {
 			offset = capture - target;
-			if (offset < 0) break;
+			if (offset > offset_overflow) break;
 			rx_byte = (rx_byte >> 1) | rx_bit;
 			target += ticks_per_bit;
 			state++;
